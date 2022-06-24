@@ -1,2 +1,2 @@
 # linkedListsProject
-My school project
+My school project for WSB
