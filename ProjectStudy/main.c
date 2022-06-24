@@ -7,44 +7,26 @@ struct osobaStr {
 	struct osobaStr* next;
 };
 
-struct osobaStr* dodajRejstracje(const int age)
-{
-	struct osobaStr* nowaOsoba = NULL;
-	nowaOsoba = malloc(sizeof(struct osobaStr));
-	if (nowaOsoba != NULL)
-	{
-		nowaOsoba->next = NULL;
-		nowaOsoba->nrRejstr = age;
-		printf("stworzono nowa rejstracje w pamieci: %p\n", nowaOsoba);
-	}
-	else
-	{
-		printf("Error: nie udalo sie dodac rejstracji \n");
-	}
-	return nowaOsoba;
-}
-
-void push(struct osobaStr** dodajRejstracje, int new_data)
+void naPoczatek(struct osobaStr** head_ref, int new_data)
 {
 	struct osobaStr* replaceOne = (struct osobaStr*)malloc(sizeof(struct osobaStr));
 	replaceOne->nrRejstr = new_data;
-	replaceOne->next = (*dodajRejstracje);
-	(*dodajRejstracje) = replaceOne;
+	replaceOne->next = (*head_ref);
+	(*head_ref) = replaceOne;
 }
 
-void printPerson(const struct osobaStr* person, const char* comment)
+void printPerson(const struct osobaStr* dane, const char* comment)
 {
-	if (person == NULL)
+	if (dane == NULL)
 	{
 		printf("%s == NULL\n", comment);
 	}
 	else
 	{
-		printf("%s: Rejstracja:%d address:%p nextInLine:%p\n",
-			comment,
-			person->nrRejstr,
-			person,
-			person->next);
+		printf("Rejstracja:%d \nAdres:%p \nNastepny w liscie:%p\n",
+			dane->nrRejstr,
+			dane,
+			dane->next);
 	}
 
 }
@@ -52,18 +34,18 @@ void printPerson(const struct osobaStr* person, const char* comment)
 void wydrukujListe(const struct osobaStr* list)
 {
 	printf("Drukuje liste:\n");
-	const struct osobaStr* t;
-	t = list;
-	if (t == NULL)
+	const struct osobaStr* x;
+	x = list;
+	if (x == NULL)
 	{
 		printf("lista jest pusta\n");
 	}
 	else
 	{
-		while (t)
+		while (x)
 		{
-			printPerson(t, "t");
-			t = t->next;
+			printPerson(x, "t");
+			x = x->next;
 		}
 	}
 }
@@ -82,7 +64,7 @@ void czyszczenie(struct osobaStr* list)
 
 int main()
 {
-	printf("Lista komend:\n x - zamknij program,\n wydrukuj - wydrukuj dane w liscie,\n [liczba] - dodaje rejstracje z podana liczba\n");
+	printf("Lista komend:\n x - zamknij program,\n wydrukuj - wydrukuj dane w liscie,\n [liczba] - dodaje rejstracje z podana liczba [NA POCZATEK LISTY]\n");
 
 	struct osobaStr* one = NULL;
 	struct osobaStr* nextOne = NULL;
@@ -107,32 +89,11 @@ int main()
 			wydrukujListe(one);
 		}
 
-		else if (strcmp("+poczatek\n", komenda) == 0)
-		{
-			sscanf(komenda, "%d", &age);
-			printf("Podaj rejstracje zeby dodac ja na poczatek listy:\n");
-			push(&one, age);
-		}
-
 		else if (sscanf(komenda, "%d", &age) != NULL)
 		{
 			printf("Dodaje %d\n", age);
-			if (one == NULL)
-			{
-				one = dodajRejstracje(age);
-				if (one != NULL)
-				{
-					nextOne = one;
-				}
-			}
-			else
-			{
-				nextOne->next = dodajRejstracje(age);
-				if (nextOne->next != NULL)
-				{
-					nextOne = nextOne->next;
-				}
-			}
+
+			naPoczatek(&one, age);
 
 		}
 	}
