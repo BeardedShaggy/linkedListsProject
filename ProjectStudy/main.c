@@ -2,20 +2,41 @@
 #include <stdlib.h>
 #include <string.h>
 
-struct osobaStr {
+typedef struct osobaStr {
 	int nrRejstr;
 	struct osobaStr* next;
 };
 
-void naPoczatek(struct osobaStr** head_ref, int new_data)
+void dodajPoczatek(struct osobaStr** one, int new_data) //Dodaje na poczatek listy wiazanej
 {
 	struct osobaStr* replaceOne = (struct osobaStr*)malloc(sizeof(struct osobaStr));
 	replaceOne->nrRejstr = new_data;
-	replaceOne->next = (*head_ref);
-	(*head_ref) = replaceOne;
+	replaceOne->next = (*one);
+	(*one) = replaceOne;
 }
 
-void printPerson(const struct osobaStr* dane, const char* comment)
+void dodajKoniec(struct osobaStr** one, int new_data) //dodaje nowa rejstracje na koniec listy wiazanej
+{
+	struct osobaStr* new_node = (struct osobaStr*)malloc(sizeof(struct osobaStr));
+	struct osobaStr* last = *one;
+
+	new_node->nrRejstr = new_data;
+	new_node->next = NULL;
+
+	if (*one == NULL)
+	{
+		*one = new_node;
+		return;
+	}
+
+	while (last->next != NULL)
+		last = last->next;
+
+	last->next = new_node;
+	return;
+}
+
+void printujOsobe(const struct osobaStr* dane, const char* comment) //Printuje dane
 {
 	if (dane == NULL)
 	{
@@ -23,15 +44,16 @@ void printPerson(const struct osobaStr* dane, const char* comment)
 	}
 	else
 	{
-		printf("Rejstracja:%d \nAdres:%p \nNastepny w liscie:%p\n",
+		printf("\n \nRejstracja:%d \nAdres:%p \nNastepny w liscie:%p\n\n",
 			dane->nrRejstr,
 			dane,
-			dane->next);
+			dane->next
+		);
 	}
 
 }
 
-void wydrukujListe(const struct osobaStr* list)
+void wydrukujListe(const struct osobaStr* list) //Drukuje liste
 {
 	printf("Drukuje liste:\n");
 	const struct osobaStr* x;
@@ -44,7 +66,7 @@ void wydrukujListe(const struct osobaStr* list)
 	{
 		while (x)
 		{
-			printPerson(x, "t");
+			printujOsobe(x, "t");
 			x = x->next;
 		}
 	}
@@ -69,12 +91,13 @@ int main()
 	struct osobaStr* one = NULL;
 	struct osobaStr* nextOne = NULL;
 
-	char komenda[64];
-	int age;
+	char komenda[64]; //przechowuje komende numer 1 (main menu)
+	char komenda2[64]; //przechowuje komende numer 2 (menu dodawania)
+	int number;
 
 	while (1)
 	{
-		printf("Wpisz polecenie: ");
+		printf("Wpisz polecenie: \n");
 
 		fgets(komenda, 64, stdin);
 		if (strcmp("x\n", komenda) == 0)
@@ -85,15 +108,23 @@ int main()
 
 		else if (strcmp("wydrukuj\n", komenda) == 0)
 		{
-			printf("Drukuje..\n");
+			printf("\n");
 			wydrukujListe(one);
 		}
 
-		else if (sscanf(komenda, "%d", &age) != NULL)
+		else if (sscanf(komenda, "%d", &number) != NULL)
 		{
-			printf("Dodaje %d\n", age);
+			printf("Wybierz gdzie dodac rejstracje: %d\n Do wyboru:\n poczatek\n koniec\n", number);
+			fgets(komenda2, 64, stdin);
 
-			naPoczatek(&one, age);
+			if (strcmp("poczatek\n", komenda2) == 0) {
+				dodajPoczatek(&one, number);
+				printf("\n dodano rejstracje na poczatek \n");
+			}
+			else if (strcmp("koniec\n", komenda2) == 0) {
+				dodajKoniec(&one, number);
+				printf("\n dodano rejstracje na koniec \n");
+			}
 
 		}
 	}
@@ -103,4 +134,5 @@ int main()
 	nextOne = NULL;
 
 	return 0;
+	//Stworzone przez Marcin Cudny dla WSB
 }
